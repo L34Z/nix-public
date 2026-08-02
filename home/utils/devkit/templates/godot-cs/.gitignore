@@ -1,0 +1,6 @@
+.direnv/
+.godot/
+build/
+bin/
+obj/
+.mono/

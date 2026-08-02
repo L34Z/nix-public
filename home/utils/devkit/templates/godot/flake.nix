@@ -1,0 +1,23 @@
+{
+  description = "Godot project";
+
+  # Pinned to the same channel as the system flake so the dev shell reuses
+  # store paths you already have instead of downloading a second toolchain.
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+
+  outputs = { nixpkgs, ... }:
+    let
+      forAll = f: nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ]
+        (s: f nixpkgs.legacyPackages.${s});
+    in {
+      devShells = forAll (pkgs: {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            godot # 4.6.3 editor + headless runner
+            godot-mcp # Claude Code MCP server (Coding-Solo, CLI-driven)
+            gdtoolkit_4 # gdlint + gdformat
+          ];
+        };
+      });
+    };
+}

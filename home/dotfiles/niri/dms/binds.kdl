@@ -1,0 +1,5 @@
+binds {
+    Mod+Backslash repeat=false { spawn "dms" "ipc" "notepad" "toggle"; }
+    Mod+B repeat=false allow-inhibiting=false { spawn "firefox"; }
+    Mod+grave { toggle-overview; }
+}

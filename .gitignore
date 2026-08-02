@@ -1,0 +1,11 @@
+# Runtime state written by the shells (mutable, machine-local)
+home/dotfiles/fish/fish_variables
+home/dotfiles/hypr/hyprland.conf
+home/dotfiles/niri/config.kdl.*backup*
+
+# nix build symlinks
+result
+result-*
+
+# direnv caches (the devkit templates are direnv projects)
+.direnv/
