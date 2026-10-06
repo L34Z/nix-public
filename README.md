@@ -34,11 +34,11 @@ wrapper flake** that pulls this repo in as an input and layers them on top.
 
 ## Compose the private layer
 
-The private wrapper flake references this repo with an absolute `path:` input
+The private wrapper flake references this repo with an absolute `git+file:` input
 and adds its own host, hardware, and personal home-manager module:
 
 ```nix
-inputs.pub.url = "path:/home/z/nix/public";
+inputs.pub.url = "git+file:///home/z/nix/public";
 # ...
 nixosConfigurations.<host> = nixpkgs.lib.nixosSystem {
   modules = [
