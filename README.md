@@ -1,4 +1,4 @@
-# nixos-public
+# public
 
 Generic NixOS desktop base — Hyprland + niri, caelestia/DankMaterialShell,
 1Password, browsers, a Neovim dev toolchain, and live-editable dotfiles.
@@ -26,19 +26,19 @@ wrapper flake** that pulls this repo in as an input and layers them on top.
 ## Set up a fresh box (disaster recovery)
 
 1. Boot the NixOS installer; partition, format, and mount your disks at `/mnt`.
-2. `git clone <this repo> /mnt/home/z/nixos-public`
+2. `git clone <this repo> /mnt/home/z/nix/public`
 3. `nixos-generate-config --root /mnt` and copy the generated
    `hardware-configuration.nix` over `hosts/example/hardware-configuration.nix`.
-4. `nixos-install --flake /mnt/home/z/nixos-public#example`
-5. Reboot, then rebuild with `nh os switch` (points at `~/nixos-public`).
+4. `nixos-install --flake /mnt/home/z/nix/public#example`
+5. Reboot, then rebuild with `nh os switch` (points at `~/nix/public`).
 
 ## Compose the private layer
 
-The private wrapper flake references this repo with a `path:` input and adds
-its own host, hardware, and personal home-manager module:
+The private wrapper flake references this repo with an absolute `path:` input
+and adds its own host, hardware, and personal home-manager module:
 
 ```nix
-inputs.pub.url = "path:/home/z/nixos-public";
+inputs.pub.url = "path:/home/z/nix/public";
 # ...
 nixosConfigurations.<host> = nixpkgs.lib.nixosSystem {
   modules = [

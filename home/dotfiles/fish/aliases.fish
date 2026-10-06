@@ -62,20 +62,46 @@ end
 # __play <extra-bwrap-args...> -- <pkg[:binary]> <pkg-args...>
 # Use pkg:binary when the executable's name differs from the package attr,
 # e.g. nodejs:node, ripgrep:rg, imagemagick:convert.
+# If the spec is a path ending in .AppImage it's run through appimage-run
+# instead (supplies the FHS loader NixOS lacks); the file is bound read-only
+# and X11 is exposed, since linuxdeploy AppImages force GDK_BACKEND=x11.
+#   play ~/Downloads/foo.AppImage        # with network
+#   play-offline ~/Downloads/foo.AppImage  # no network
 function __play
     set -l sep (contains -i -- -- $argv)
-    set -l extra $argv[1..(math $sep - 1)]
+    set -l extra
+    test $sep -gt 1; and set extra $argv[1..(math $sep - 1)]
     set -l spec $argv[(math $sep + 1)]
-    set -l rest $argv[(math $sep + 2)..-1]
-    set -l parts (string split -m1 : -- $spec)
-    set -l pkg $parts[1]
-    set -l bin $parts[2]
-    test -z "$bin"; and set bin $pkg
+    set -l rest
+    test (math $sep + 2) -le (count $argv); and set rest $argv[(math $sep + 2)..-1]
+    set -l pkg
+    set -l bin
+    if string match -qir '\.appimage$' -- $spec
+        set -l file (path resolve -- $spec)
+        if not test -f "$file"
+            echo "play: no such AppImage: $spec" >&2
+            return 1
+        end
+        set pkg appimage-run
+        set bin appimage-run
+        set rest $file $rest
+        set extra --ro-bind $file $file \
+            --ro-bind-try /tmp/.X11-unix /tmp/.X11-unix --setenv DISPLAY "$DISPLAY" \
+            $extra
+    else
+        set -l parts (string split -m1 : -- $spec)
+        set pkg $parts[1]
+        set bin $parts[2]
+        test -z "$bin"; and set bin $pkg
+    end
     set -l rt "/run/user/"(id -u)
     # NOTE: no --new-session on purpose. It setsid()s away the controlling
     # terminal, which breaks TUI apps (amfora, htop, …). Its only real benefit
     # is blocking TIOCSTI keystroke injection into the parent shell — already
     # disabled kernel-wide here (dev.tty.legacy_tiocsti = 0), so it's redundant.
+    # Escape the caller-supplied tokens so paths with spaces/parens (common in
+    # AppImage names) survive the bwrap command string.
+    set -l tail (string escape -- $extra $bin $rest)
     nix-shell -p $pkg bubblewrap --run "bwrap \
         --unshare-all --die-with-parent \
         --ro-bind /nix /nix \
@@ -90,8 +116,7 @@ function __play
         --tmpfs $rt --setenv XDG_RUNTIME_DIR $rt \
         --ro-bind $rt/$WAYLAND_DISPLAY $rt/$WAYLAND_DISPLAY \
         --ro-bind-try $rt/pipewire-0 $rt/pipewire-0 \
-        $extra \
-        $bin $rest"
+        $tail"
 end
 
 # Sandboxed + networked (default)
@@ -156,6 +181,8 @@ end
 
 # bat command output
 alias alist 'alias | bat'
+# read a file with bat, e.g. `r file.md`
+alias r 'bat'
 function o
 	$argv | bat
 end

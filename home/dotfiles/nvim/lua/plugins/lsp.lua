@@ -25,6 +25,7 @@ return {
 				"rust_analyzer", -- Rust
 				"ols", -- Odin
 				"nim_langserver", -- Nim
+				"ts_ls", -- TypeScript (typescript-language-server)
 				"pyright", -- Python (types)
 				"ruff", -- Python (lint; format handled by conform)
 			})

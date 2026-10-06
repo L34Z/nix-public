@@ -7,12 +7,13 @@
 { config, pkgs, lib, ... }:
 
 let
-  # The public repo is expected to live at ~/nixos-public on the installed
+  # The public repo is expected to live at ~/nix/public on the installed
   # system. hypr/fish/nvim/kitty/niri are linked "out of store" so you can edit
   # them live (SUPER+ALT+H etc.) without a rebuild. The path is a plain string,
   # so it points at the working-tree checkout, never the flake's store copy —
-  # that's what keeps live-edit working under a `path:` flake input.
-  repo = "${config.home.homeDirectory}/nixos-public";
+  # that's what keeps live-edit working under a `path:` flake input. This root
+  # is one of the four concrete paths to change on a move — see ~/nix/README.md.
+  repo = "${config.home.homeDirectory}/nix/public";
   live = path: config.lib.file.mkOutOfStoreSymlink "${repo}/${path}";
 in
 {
@@ -127,11 +128,28 @@ in
     qimgv # image/media viewer; plays video via mpv
     neovide
     discord
-    stremio-linux-shell
+    # Stremio's transcode server only looks for ffmpeg at FHS paths, the
+    # bundled ffmpeg-ffprobe-static (stripped in the nix build), or the
+    # FFMPEG_BIN/FFPROBE_BIN env vars — never $PATH. Without these vars it
+    # spawn()s undefined and playback hangs on the loading screen.
+    (symlinkJoin {
+      name = "stremio-linux-shell-ffmpeg";
+      paths = [ stremio-linux-shell ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/stremio \
+          --set FFMPEG_BIN ${lib.getExe ffmpeg} \
+          --set FFPROBE_BIN ${lib.getExe' ffmpeg "ffprobe"}
+      '';
+    })
     yt-dlp
     fastfetch
+    tmux # keeps the Mod+/ scratch terminal's shell alive between show/hide (niri/scratch-term.sh)
     obsidian
     gh
+    blender
+    reaper
+    kdePackages.ark
   ];
 
   # ── Steam data on the storage SSD ────────────────────────────────────────

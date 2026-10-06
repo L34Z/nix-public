@@ -1,0 +1,19 @@
+{
+  // `run build` runs `tsc -p tsconfig.json`: typecheck src/ and emit JS +
+  // declarations to dist/. Imports use `.js` specifiers (ESM/nodenext style)
+  // so tsc emits clean output and tsx still resolves them to the `.ts` source
+  // at run/test time — no allowImportingTsExtensions (which forbids emit).
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true,
+    "sourceMap": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

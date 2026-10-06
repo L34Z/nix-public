@@ -13,7 +13,7 @@ Usage:
   dev <lang> <name>   create ./<name>, scaffold inside, then enter its shell
   dev godot [name] -cs  scaffold a C#/.NET Godot project instead of GDScript
 
-Languages: c (alias: c23), odin, rust, nim, zig, python (alias: py), godot
+Languages: c (alias: c23), odin, rust, nim, zig, typescript (alias: ts), python (alias: py), go, godot
 
 Scaffolding writes flake.nix + .envrc + starter source + a .dev marker,
 inits git if needed, `git add`s everything (flakes can't see untracked
@@ -44,7 +44,7 @@ enter() {
     exec nix develop
   else
     echo "dev: no project in $PWD (no .envrc or flake.nix)" >&2
-    echo "  start one: dev <lang> [name]   (languages: c odin rust nim zig python)" >&2
+    echo "  start one: dev <lang> [name]   (languages: c odin rust nim zig typescript python go godot)" >&2
     exit 1
   fi
 }
@@ -75,10 +75,12 @@ case "${1:-}" in
   rust) tpl=rust ;;
   nim) tpl=nim ;;
   zig) tpl=zig ;;
+  ts | typescript) tpl=typescript ;;
   py | python) tpl=python ;;
+  go) tpl=go ;;
   godot) if [ "$variant" = cs ]; then tpl=godot-cs; else tpl=godot; fi ;;
   *)
-    echo "dev: unknown language '${1:-}' (supported: c odin rust nim zig python godot)" >&2
+    echo "dev: unknown language '${1:-}' (supported: c odin rust nim zig typescript python go godot)" >&2
     exit 1
     ;;
 esac
@@ -98,6 +100,35 @@ fi
 cd "$target"
 
 cp -r --no-preserve=mode "$DEVKIT_TEMPLATES/$tpl/." .
+
+# JSON schemas power editor autocomplete only; hide them under .schemas/ so they
+# don't clutter the project root (gitignored per each template's .gitignore).
+[ -d schemas ] && mv schemas .schemas
+
+# Local AI context (nim + odin + typescript projects). The real CLAUDE.md lives ONLY
+# in ~/nix/private and is pulled in live when it has content; otherwise we write
+# a stub to overwrite. Generated here rather than shipped in the template so the
+# public repo tracks no CLAUDE.md. Scaffolded .claude/ is gitignored (see each
+# template's .gitignore). Runs before __NAME__ substitution so placeholders fill.
+case "$tpl" in
+  nim | odin | typescript)
+    mkdir -p .claude
+    claude_src=${DEVKIT_CLAUDE_SRC:-$HOME/nix/private/home/dotfiles/claude/CLAUDE.md}
+    if [ -s "$claude_src" ]; then
+      cp -f "$claude_src" .claude/CLAUDE.md
+    else
+      cat > .claude/CLAUDE.md <<'STUB'
+<!-- STUB — overwrite with the real project context (canonical: ~/nix/private). -->
+
+You are the senior engineer who owns this project.
+Make it fit to function:
+- respect the user
+- make it fast
+- keep it simple
+STUB
+    fi
+    ;;
+esac
 
 # Project name (binary/crate/module name): directory basename, sanitized to
 # what cargo/pyproject accept. Substituted into the __NAME__ placeholders —

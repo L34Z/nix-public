@@ -1,5 +1,9 @@
 if status is-interactive
-    # Commands to run in interactive sessions can go here
+    # Fresh top-level kitty window: jump straight into an interactive
+    # zoxide picker. Esc leaves you at a normal prompt.
+    if set -q KITTY_WINDOW_ID; and test "$SHLVL" -eq 1
+        zi
+    end
 end
 
 
@@ -24,3 +28,4 @@ end
 
 # (tty autostart removed: greetd/tuigreet on tty1 now launches the session —
 # Hyprland via uwsm or niri via niri-session; see modules/greeter.nix)
+export PATH="$HOME/.local/bin:$PATH"

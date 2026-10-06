@@ -1,0 +1,10 @@
+{
+  "$schema": "./.schemas/odinfmt.schema.json",
+
+  "//": "odinfmt config. Odin is tabs-indented by convention; keep it that way",
+  "//2": "so `odinfmt -w .` and the checked-in source never fight each other.",
+
+  "character_width": 100,
+  "tabs": true,
+  "tabs_width": 4
+}

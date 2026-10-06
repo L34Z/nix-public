@@ -1,0 +1,12 @@
+{
+  "$schema": "./.schemas/ols.schema.json",
+
+  "//": "Language-server config. checker_targets are the packages ols type-checks:",
+  "//2": "the root package (main.odin) and the core library (src/). Relative",
+  "//3": "imports need no collection entry here.",
+
+  "enable_document_symbols": true,
+  "enable_hover": true,
+  "enable_snippets": true,
+  "checker_targets": [".", "src"]
+}

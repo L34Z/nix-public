@@ -21,8 +21,12 @@
     ols #          Odin Language Server   (Odin)
     nimlangserver #                       (Nim)
     zls #          Zig Language Server     (Zig)
+    typescript-language-server # ts_ls     (TypeScript)
+    typescript #   tsserver + tsc backing ts_ls (TypeScript)
     pyright #      types/completion       (Python)
     ruff #         lint + format          (Python)
+    gopls #        Go Language Server     (Go)
+    gofumpt #      strict gofmt formatter (Go)
     gdtoolkit_4 #  gdlint + gdformat      (Godot / GDScript)
     # GDScript LSP is served by the *running Godot editor* (port 6005) — nvim's
     # `gdscript` LSP connects to it, so there's no standalone server to install.
@@ -32,6 +36,7 @@
     # Odin formatting comes from ols; Rust via rustfmt and Zig via `zig fmt`
     # (both present in their respective dev shells alongside the compiler).
     nph # Nim formatter
+    prettier # TS/JS formatter
 
     # ── Treesitter build deps ──────────────────────────────────────────────
     # lazy.nvim's nvim-treesitter compiles grammars at runtime, which needs a

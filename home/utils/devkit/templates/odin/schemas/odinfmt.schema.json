@@ -1,0 +1,91 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"properties": {
+		"character_width": {
+			"type": "integer",
+			"default": 100,
+			"description": "How many characters it takes before it line breaks it."
+		},
+		"spaces": {
+			"type": "integer",
+			"default": 4,
+			"description": "Spaces per indentation"
+		},
+		"newline_limit": {
+			"type": "integer",
+			"default": 2,
+			"description": "The limit of newlines between statements and declarations."
+		},
+		"tabs": {
+			"type": "boolean",
+			"default": true,
+			"description": "Use tabs instead of spaces"
+		},
+		"tabs_width": {
+			"type": "integer",
+			"default": 4,
+			"description": "How many characters one tab represents"
+		},
+		"convert_do": {
+			"type": "boolean",
+			"default": false,
+			"description": "Convert all do statements to brace blocks"
+		},
+		"exp_multiline_composite_literals": {
+			"type": "boolean",
+			"default": false,
+			"description": "Experimental: Composite literals that span multiple lines are not forcibly inlined"
+		},
+		"brace_style": {
+			"type": "string",
+			"enum": ["_1TBS", "Allman", "Stroustrup", "K_And_R"],
+			"default": "_1TBS"
+		},
+		"indent_cases": {
+			"type": "boolean",
+			"default": false
+		},
+		"newline_style": {
+			"type": "string",
+			"enum": ["CRLF", "LF"],
+			"default": "CRLF"
+		},
+		"inline_single_stmt_case": {
+			"type": "boolean",
+			"default": false,
+			"description": "When statement in the clause contains one simple statement, it will inline the case and statement in one line"
+		},
+		"spaces_around_colons": {
+			"type": "boolean",
+			"default": false,
+			"description": "Put a space on both sides of a single colon during variable/field declaration, such as `foo : bar`"
+		},
+		"sort_imports": {
+			"type": "boolean",
+			"default": true,
+			"description": "Sorts imports alphabetically"
+		},
+		"space_single_line_blocks": {
+			"type": "boolean",
+			"default": false,
+			"description": "Put spaces around braces of single-line blocks: `{return 0}` => `{ return 0 }`"
+		},
+		"align_struct_fields": {
+			"type": "boolean",
+			"default": true,
+			"description": "Align the types of struct fields so they all start at the same column"
+		},
+		"align_struct_values": {
+			"type": "boolean",
+			"default": true,
+			"description": "Align the values of struct fields when assigning a struct value to a variable so they all start at the same column"
+		},
+		"align_struct_declarations": {
+			"type": "boolean",
+			"default": false,
+			"description": "Align the struct declaration symbol in struct fields so they all start at the same column"
+		}
+	},
+	"required": []
+}

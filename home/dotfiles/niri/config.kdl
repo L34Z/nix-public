@@ -21,6 +21,76 @@ output "HDMI-A-2" {
 // above the dynamic workspaces; Mod+0 jumps to it.
 workspace "Windows 11"
 
+// Scratch terminal (Mod+/): floating, 40% wide, full working-area height,
+// flush with the right edge. The slide in/out is the window-open/close
+// animation below; scratch-term.sh explains how the shell survives hiding.
+window-rule {
+    match app-id="^scratch-term$"
+    open-floating true
+    default-column-width { proportion 0.4; }
+    default-window-height { proportion 1.0; }
+    default-floating-position x=0 y=0 relative-to="right"
+}
+
+// Global open/close shaders (GLSL inline; niri takes no file path): slide for
+// the scratch terminal, which is picked out purely by its
+// shape (only window ~40% wide and full working-area height, aspect ~1.36),
+// and an approximation of niri's stock scale+fade for everything else.
+animations {
+    window-open {
+        duration-ms 200
+        curve "ease-out-cubic"
+        custom-shader r"
+vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+    float p = niri_clamped_progress;
+    float ratio = size_geo.y / size_geo.x;
+    bool scratch = size_geo.x > 600.0 && ratio > 1.30 && ratio < 1.42;
+
+    vec3 coords = coords_geo;
+    float alpha = 1.0;
+    if (scratch) {
+        coords.x -= 1.0 - p;
+    } else {
+        float s = 0.5 + 0.5 * p;
+        coords.xy = (coords.xy - 0.5) / s + 0.5;
+        alpha = p;
+    }
+    if (coords.x < 0.0 || coords.x > 1.0 || coords.y < 0.0 || coords.y > 1.0) {
+        return vec4(0.0);
+    }
+    vec3 coords_tex = niri_geo_to_tex * coords;
+    return texture2D(niri_tex, coords_tex.st) * alpha;
+}
+        "
+    }
+    window-close {
+        duration-ms 200
+        curve "ease-out-quad"
+        custom-shader r"
+vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+    float p = niri_clamped_progress;
+    float ratio = size_geo.y / size_geo.x;
+    bool scratch = size_geo.x > 600.0 && ratio > 1.30 && ratio < 1.42;
+
+    vec3 coords = coords_geo;
+    float alpha = 1.0;
+    if (scratch) {
+        coords.x -= p;
+    } else {
+        float s = 1.0 - 0.5 * p;
+        coords.xy = (coords.xy - 0.5) / s + 0.5;
+        alpha = 1.0 - p;
+    }
+    if (coords.x < 0.0 || coords.x > 1.0 || coords.y < 0.0 || coords.y > 1.0) {
+        return vec4(0.0);
+    }
+    vec3 coords_tex = niri_geo_to_tex * coords;
+    return texture2D(niri_tex, coords_tex.st) * alpha;
+}
+        "
+    }
+}
+
 input {
     keyboard {
         xkb {
@@ -40,7 +110,7 @@ cursor {
 
 layout {
     gaps 8
-    center-focused-column "never"
+    center-focused-column "always"
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
@@ -86,8 +156,8 @@ binds {
     Mod+Q { close-window; }
 
     Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-workspace-down; }
+    Mod+Up    { focus-workspace-up; }
     Mod+Right { focus-column-right; }
     Mod+H { focus-column-left; }
     Mod+J { focus-window-down; }
@@ -120,6 +190,8 @@ binds {
 
     Mod+W { toggle-window-floating; }
     Mod+Shift+W { switch-focus-between-floating-and-tiling; }
+    // Scratch terminal toggle (Hyprland-style); logic lives in scratch-term.sh.
+    Mod+Slash repeat=false { spawn-sh "~/.config/niri/scratch-term.sh"; }
 
     // ── Workspaces / monitors ────────────────────────────────────────────
     Mod+O { toggle-overview; }

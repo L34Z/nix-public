@@ -12,6 +12,8 @@ return {
 				c = { "clang_format" },
 				rust = { "rustfmt" },
 				nim = { "nph" },
+				typescript = { "prettier" },
+				typescriptreact = { "prettier" }, -- .tsx
 				python = { "ruff_format" },
 				lua = { "stylua" }, -- best-effort; only runs if stylua is on PATH
 			},

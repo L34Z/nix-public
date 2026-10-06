@@ -1,6 +1,6 @@
 .direnv/
-build/
-nimcache/
+dist/
+node_modules/
 
 # Local AI context — a stub ships in the template; overwrite .claude/CLAUDE.md
 # with the real one from ~/nix/private. Never committed.

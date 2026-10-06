@@ -13,5 +13,5 @@
   networking.hostName = "example";
 
   # Rebuild this same flake with `nh os switch` once installed.
-  programs.nh.flake = "/home/z/nixos-public";
+  programs.nh.flake = "/home/z/nix/public";
 }

@@ -18,6 +18,9 @@
   ];
 
   networking.networkmanager.enable = true;
+  # Split DNS so per-interface resolvers (Tailscale MagicDNS, Mullvad tunnel
+  # DNS) coexist instead of fighting over a single global /etc/resolv.conf.
+  services.resolved.enable = true;
 
   # ── Boot ────────────────────────────────────────────────────────────────
   # Generic systemd-boot + plymouth splash. LUKS/crypttab (if any) is the
@@ -129,6 +132,7 @@
     nix-search-cli
     ntfs3g
     pciutils
+    appimage-run
   ];
 
   fonts.packages = with pkgs; [

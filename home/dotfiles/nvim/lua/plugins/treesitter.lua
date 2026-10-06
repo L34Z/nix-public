@@ -26,7 +26,7 @@ return {
 			end
 
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = { "c", "rust", "nim", "python", "lua", "vim", "vimdoc", "bash", "markdown" },
+				ensure_installed = { "c", "rust", "nim", "typescript", "tsx", "python", "lua", "vim", "vimdoc", "bash", "markdown" },
 				auto_install = true, -- pull a grammar the first time a filetype opens
 				highlight = { enable = true },
 				indent = { enable = true },

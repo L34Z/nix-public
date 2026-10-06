@@ -1,2 +1,10 @@
 .direnv/
 build/
+
+# Local AI context — a stub ships in the template; overwrite .claude/CLAUDE.md
+# with the real one from ~/nix/private. Never committed.
+.claude/
+
+# Vendored JSON schemas for ols.json/odinfmt.json — editor autocomplete only,
+# materialized by dev.sh; never committed in a project.
+.schemas/
